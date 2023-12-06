@@ -11,3 +11,6 @@ And run
 
 ### Create User
 `make create-user EMAIL=examle@mail.ru PASSWORD=example_pwd`
+
+### Authorization type
+Bearer 
