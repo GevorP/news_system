@@ -1,7 +1,9 @@
 # News
 
 ### Install project
+Enter to directory
 `cd www`
+And run 
 `make install`
 
 ### Run migrations
