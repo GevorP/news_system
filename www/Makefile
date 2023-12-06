@@ -35,6 +35,9 @@ db-run-migrate:
 create-user:
 	@$(EXEC) bin/console app:create:user  $(EMAIL) $(PASSWORD)
 
+create-jwt:
+	@$(EXEC) bin/console lexik:jwt:generate-keypair
+
 tests:
 	@$(EXEC) bin/console doctrine:database:drop --force --env=test || true
 	@$(EXEC) bin/console doctrine:database:create --env=test
