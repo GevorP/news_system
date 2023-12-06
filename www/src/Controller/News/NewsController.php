@@ -8,6 +8,7 @@ use App\UseCase\Handler\UpdateNewsHandler;
 use App\UseCase\Input\BaseNewsInput;
 use App\UseCase\Input\NewsInput;
 use App\UseCase\Input\UpdateNewsInput;
+use App\UseCase\Output\CreateNewsResponse;
 use App\UseCase\Output\NewsResponse;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
@@ -27,13 +28,18 @@ class NewsController extends AbstractController
     #[OA\Post(
         summary: 'Create news', responses: [
             new OA\Response(response: Response::HTTP_BAD_REQUEST, description: 'something wrong'),
-            new OA\Response(response: Response::HTTP_CREATED, description: 'Ok'),
+            new OA\Response(
+                response: Response::HTTP_CREATED,
+                description: 'Ok',
+                content: new JsonContent(
+                    ref: new Model(type: CreateNewsResponse::class)
+                )
+            ),
         ]
     )]
-    public function create(NewsInput $newsInput, CreateNewsHandler $createNewsHandler): Response
+    public function create(NewsInput $newsInput, CreateNewsHandler $createNewsHandler): JsonResponse
     {
-        $createNewsHandler($newsInput);
-        return new Response("ok", Response::HTTP_CREATED);
+        return $this->json($createNewsHandler($newsInput), Response::HTTP_CREATED);
     }
 
     #[OA\RequestBody(required: true, content: new JsonContent(
@@ -65,7 +71,7 @@ class NewsController extends AbstractController
         return new Response("deleted", Response::HTTP_OK);
     }
 
-    #[Route('/app/news/{id}', name: 'get_news', methods: [Request::METHOD_GET])]
+    #[Route('/public/news/{id}', name: 'get_news', methods: [Request::METHOD_GET])]
     #[OA\Get(
         summary: 'Get news by id', responses: [
         new OA\Response(response: Response::HTTP_BAD_REQUEST, description: 'something wrong'),

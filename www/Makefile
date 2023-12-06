@@ -9,6 +9,7 @@ php:
 install:
 	@$(DC) build
 	@$(MAKE) start -s
+	@$(MAKE) create-jwt
 
 composer-update:
 	@$(COMPOSER) update
