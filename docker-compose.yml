@@ -1,0 +1,42 @@
+version: '3'
+services:
+    web:
+        image: nginx
+        volumes:
+            - ./.docker/conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./www:/var/www/html
+            - ./.docker/conf/nginx/log:/var/log/nginx/
+        ports:
+            - "80:80"
+        depends_on:
+            - php
+        networks:
+            - db-network
+    php:
+        build: .docker
+        volumes:
+            - ./.docker/conf/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+            - ./.docker/conf/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+            - ./www:/var/www/html
+        depends_on:
+            - db
+        networks:
+            - db-network
+        extra_hosts:
+            - host.docker.internal:host-gateway
+    db:
+        image: postgres:14.5
+        restart: on-failure
+        environment:
+            - POSTGRES_DB=${DATABASE_NAME}
+            - POSTGRES_USER=${DATABASE_USER}
+            - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+        ports:
+            - "5432:5432"
+        #volumes:
+        #   - ./.docker/conf/postgres/:/docker-entrypoint-initdb.d/
+        networks:
+            - db-network
+
+networks:
+    db-network:

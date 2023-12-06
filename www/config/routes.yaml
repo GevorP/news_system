@@ -1,0 +1,14 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+app.swagger_ui:
+    path: /api/doc
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+
+api_token_invalidate:
+    path: /logout
+
+api_refresh_token:
+    path: /auth/token/refresh
