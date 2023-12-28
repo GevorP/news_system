@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Entity\User\User;
@@ -14,35 +16,34 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 #[AsCommand(name: 'app:create:user', description: 'Create user')]
 class CreateUserCommand extends Command
 {
-    public function __construct(
-        private UserRepository $userRepository,
-        private PasswordHasherFactoryInterface $hasherFactory
-    ) {
-        parent::__construct();
-    }
+	public function __construct(
+		private UserRepository $userRepository,
+		private PasswordHasherFactoryInterface $hasherFactory
+	) {
+		parent::__construct();
+	}
 
-    protected function configure(): void
-    {
-        $this->addArgument('email', InputArgument::REQUIRED);
-        $this->addArgument('password', InputArgument::REQUIRED);
-    }
+	protected function configure(): void
+	{
+		$this->addArgument('email', InputArgument::REQUIRED);
+		$this->addArgument('password', InputArgument::REQUIRED);
+	}
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $email = $input->getArgument("email");
-        $password = $input->getArgument("password");
+	protected function execute(InputInterface $input, OutputInterface $output): int
+	{
+		$email = $input->getArgument('email');
+		$password = $input->getArgument('password');
 
+		$user = new User();
+		$user->setEmail($email);
 
-        $user = new User();
-        $user->setEmail($email);
+		$passwordHasher = $this->hasherFactory->getPasswordHasher($user);
+		$user->setPassword($passwordHasher->hash($password));
 
-        $passwordHasher = $this->hasherFactory->getPasswordHasher($user);
-        $user->setPassword($passwordHasher->hash($password));
+		$this->userRepository->save($user, true);
 
-        $this->userRepository->save($user, true);
+		$output->writeln('User created');
 
-        $output->writeln('User created');
-
-        return Command::SUCCESS;
-    }
+		return Command::SUCCESS;
+	}
 }

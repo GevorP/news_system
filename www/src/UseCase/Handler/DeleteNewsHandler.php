@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\Handler;
 
 use App\Repository\News\NewsRepository;
@@ -8,20 +10,19 @@ use http\Exception\InvalidArgumentException;
 
 class DeleteNewsHandler
 {
-    public function __construct(
-        private readonly NewsRepository $newsRepository,
-    )
-    {
-    }
+	public function __construct(
+		private readonly NewsRepository $newsRepository,
+	) {
+	}
 
-    public function __invoke(BaseNewsInput $newsInput) :void
-    {
-        $news = $this->newsRepository->find($newsInput->id);
+	public function __invoke(BaseNewsInput $newsInput): void
+	{
+		$news = $this->newsRepository->find($newsInput->id);
 
-        if(!$news){
-            throw new InvalidArgumentException("Invalid news id");
-        }
+		if (! $news) {
+			throw new InvalidArgumentException('Invalid news id');
+		}
 
-        $this->newsRepository->delete($news);
-    }
+		$this->newsRepository->delete($news);
+	}
 }
